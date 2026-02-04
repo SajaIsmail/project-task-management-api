@@ -57,3 +57,16 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Authentication
+This API uses Laravel Sanctum for authentication.
+
+## Endpoints
+POST /api/register  
+POST /api/login  
+POST /api/logout  
+
+GET /api/tasks  
+POST /api/tasks  
+PUT /api/tasks/{id}  
+DELETE /api/tasks/{id}
