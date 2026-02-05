@@ -15,7 +15,8 @@ Route::get('/test', function () {
 });
 
 // Protected routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+
 
     // User profile
     Route::get('/profile', function (Request $request) {
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasks/{task}', [TaskController::class, 'show']);  // Get single task
     Route::put('/tasks/{task}', [TaskController::class, 'update']); // Update task
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']); // Delete task
+     Route::post('/tasks/{task}/dependencies', [TaskController::class, 'addDependency']);
+    Route::post('/tasks/{task}/complete', [TaskController::class, 'completeTask']);
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
