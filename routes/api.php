@@ -29,7 +29,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/tasks/{task}', [TaskController::class, 'show']);  // Get single task
     Route::put('/tasks/{task}', [TaskController::class, 'update']); // Update task
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']); // Delete task
-     Route::post('/tasks/{task}/dependencies', [TaskController::class, 'addDependency']);
+    Route::post('/task-dependency', [TaskController::class, 'addDependency']);
+    Route::post('/tasks/{task}/dependencies', [TaskController::class, 'addDependency']);
     Route::post('/tasks/{task}/complete', [TaskController::class, 'completeTask']);
 
     // Logout
