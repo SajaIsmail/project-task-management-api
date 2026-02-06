@@ -55,25 +55,44 @@ class TaskController extends Controller
     }
 
     // 4️⃣ Update task
-    public function update(Request $request, Task $task)
-    {
-        if ($task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'in:pending,in_progress,completed'
-        ]);
-
-        $task->update($request->only(['title', 'description', 'status']));
-
-        return response()->json([
-            'message' => 'Task updated successfully',
-            'task' => $task
-        ]);
+ // 4️⃣ Update task
+public function update(Request $request, Task $task)
+{
+    // Ownership check
+    if ($task->user_id !== auth()->id()) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+
+    $request->validate([
+        'title' => 'sometimes|required|string|max:255',
+        'description' => 'nullable|string',
+        'status' => 'in:pending,in_progress,completed'
+    ]);
+
+    // 🔴 BLOCK COMPLETION IF TASK HAS INCOMPLETE DEPENDENCIES
+    if (
+        $request->has('status') &&
+        $request->status === 'completed'
+    ) {
+        $hasIncompleteBlockers = $task->blockingTasks()
+            ->where('status', '!=', 'completed')
+            ->exists();
+
+        if ($hasIncompleteBlockers) {
+            return response()->json([
+                'message' => 'Task cannot be completed because it is blocked by other incomplete tasks'
+            ], 422);
+        }
+    }
+
+    $task->update($request->only(['title', 'description', 'status']));
+
+    return response()->json([
+        'message' => 'Task updated successfully',
+        'task' => $task
+    ]);
+}
+
 
     // 5️⃣ Delete task
     public function destroy(Task $task)
